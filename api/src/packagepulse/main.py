@@ -6,8 +6,6 @@ from packagepulse.settings import Settings, get_settings
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
-    # The interactive docs are for local development. In production the API only
-    # answers the web app, so there is nothing public to browse.
     show_docs = not settings.is_production
 
     app = FastAPI(
