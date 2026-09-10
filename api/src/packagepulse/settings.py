@@ -1,6 +1,7 @@
 from functools import lru_cache
 from typing import Literal
 
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +11,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="PP_", env_file=".env", extra="ignore")
 
     env: Literal["development", "test", "production"] = "development"
+    github_token: SecretStr | None = None
 
     @property
     def is_production(self) -> bool:
