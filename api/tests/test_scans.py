@@ -1,37 +1,13 @@
 import json
-from collections.abc import AsyncIterator, Callable
+from collections.abc import Callable
 from typing import Any
 
 import httpx
-import pytest
 import respx
-from httpx import ASGITransport, AsyncClient
-
-from packagepulse.main import create_app
-from packagepulse.settings import Settings
+from httpx import AsyncClient
 
 Fixture = Callable[[str], Any]
-
-
-@pytest.fixture
-async def api() -> AsyncIterator[AsyncClient]:
-    app = create_app(Settings(env="test"))
-    async with (
-        app.router.lifespan_context(app),
-        AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client,
-    ):
-        yield client
-
-
-def parse_sse(text: str) -> list[tuple[str, dict[str, Any]]]:
-    events = []
-    for block in text.strip().split("\n\n"):
-        lines = [line for line in block.splitlines() if not line.startswith(":")]
-        if lines:
-            name = next(line.removeprefix("event: ") for line in lines if line.startswith("event: "))
-            data = next(line.removeprefix("data: ") for line in lines if line.startswith("data: "))
-            events.append((name, json.loads(data)))
-    return events
+Sse = Callable[[str], list[tuple[str, dict[str, Any]]]]
 
 
 def mock_upstreams(fixture: Fixture) -> None:
@@ -54,13 +30,15 @@ def mock_upstreams(fixture: Fixture) -> None:
 
 
 @respx.mock
-async def test_scans_a_manifest_and_ranks_what_to_fix_first(api: AsyncClient, fixture: Fixture) -> None:
+async def test_scans_a_manifest_and_ranks_what_to_fix_first(
+    api: AsyncClient, fixture: Fixture, sse: Sse
+) -> None:
     mock_upstreams(fixture)
 
     response = await api.post("/v1/scans", json={"manifest": "fastapi\npycrypto\nnot-a-package\n"})
 
     assert response.status_code == 200
-    events = parse_sse(response.text)
+    events = sse(response.text)
     names = [name for name, _ in events]
     assert names[0] == "scan_start"
     assert names[-1] == "summary"

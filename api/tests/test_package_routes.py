@@ -1,38 +1,12 @@
-import json
-from collections.abc import AsyncIterator, Callable
+from collections.abc import Callable
 from typing import Any
 
 import httpx
-import pytest
 import respx
-from httpx import ASGITransport, AsyncClient
-
-from packagepulse.main import create_app
-from packagepulse.settings import Settings
+from httpx import AsyncClient
 
 Fixture = Callable[[str], Any]
-
-
-@pytest.fixture
-async def api() -> AsyncIterator[AsyncClient]:
-    app = create_app(Settings(env="test"))
-    async with (
-        app.router.lifespan_context(app),
-        AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client,
-    ):
-        yield client
-
-
-def parse_sse(text: str) -> list[tuple[str, dict[str, Any]]]:
-    events = []
-    for block in text.strip().split("\n\n"):
-        lines = [line for line in block.splitlines() if not line.startswith(":")]
-        if not lines:
-            continue
-        name = next(line.removeprefix("event: ") for line in lines if line.startswith("event: "))
-        data = json.loads(next(line.removeprefix("data: ") for line in lines if line.startswith("data: ")))
-        events.append((name, data))
-    return events
+Sse = Callable[[str], list[tuple[str, dict[str, Any]]]]
 
 
 def mock_fastapi(fixture: Fixture) -> None:
@@ -80,13 +54,13 @@ async def test_returns_a_package_report(api: AsyncClient, fixture: Fixture) -> N
 
 
 @respx.mock
-async def test_streams_provider_events_then_the_report(api: AsyncClient, fixture: Fixture) -> None:
+async def test_streams_provider_events_then_the_report(api: AsyncClient, fixture: Fixture, sse: Sse) -> None:
     mock_fastapi(fixture)
 
     response = await api.get("/v1/packages/pypi/fastapi/stream")
 
     assert response.headers["content-type"].startswith("text/event-stream")
-    events = parse_sse(response.text)
+    events = sse(response.text)
     names = [name for name, _ in events]
     assert names[0] == "start"
     assert names[-1] == "report"
@@ -95,7 +69,7 @@ async def test_streams_provider_events_then_the_report(api: AsyncClient, fixture
 
 
 @respx.mock
-async def test_unknown_packages_are_not_found(api: AsyncClient) -> None:
+async def test_unknown_packages_are_not_found(api: AsyncClient, sse: Sse) -> None:
     respx.get("https://pypi.org/pypi/no-such-package/json").mock(return_value=httpx.Response(404))
 
     response = await api.get("/v1/packages/pypi/no-such-package")
@@ -104,7 +78,7 @@ async def test_unknown_packages_are_not_found(api: AsyncClient) -> None:
     assert response.status_code == 404
     assert response.headers["content-type"] == "application/problem+json"
     assert response.json()["code"] == "not_found"
-    assert parse_sse(stream.text)[-1] == (
+    assert sse(stream.text)[-1] == (
         "error",
         {"code": "not_found", "message": "no-such-package was not found on pypi"},
     )

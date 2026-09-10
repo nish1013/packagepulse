@@ -38,8 +38,8 @@ VersionQuery = Annotated[str | None, Query(max_length=64)]
 async def package_stream(
     ecosystem: Ecosystem, name: str, orchestrator: OrchestratorDep, version: VersionQuery = None
 ) -> Response:
-    if _is_bare_scope(ecosystem, name):
-        report = await _report(orchestrator, ecosystem, f"{name}/stream", version)
+    if is_bare_scope(ecosystem, name):
+        report = await report_or_problem(orchestrator, ecosystem, f"{name}/stream", version)
         return JSONResponse(report.model_dump(mode="json"))
     return sse_response(_package_events(orchestrator, ecosystem, validate_name(ecosystem, name), version))
 
@@ -48,7 +48,7 @@ async def package_stream(
 async def package(
     ecosystem: Ecosystem, name: str, orchestrator: OrchestratorDep, version: VersionQuery = None
 ) -> PackageReport:
-    return await _report(orchestrator, ecosystem, validate_name(ecosystem, name), version)
+    return await report_or_problem(orchestrator, ecosystem, validate_name(ecosystem, name), version)
 
 
 def validate_name(ecosystem: Ecosystem, name: str) -> str:
@@ -63,11 +63,11 @@ def validate_name(ecosystem: Ecosystem, name: str) -> str:
     return name
 
 
-def _is_bare_scope(ecosystem: Ecosystem, name: str) -> bool:
+def is_bare_scope(ecosystem: Ecosystem, name: str) -> bool:
     return ecosystem is Ecosystem.NPM and name.startswith("@") and "/" not in name
 
 
-async def _report(
+async def report_or_problem(
     orchestrator: Orchestrator, ecosystem: Ecosystem, name: str, version: str | None
 ) -> PackageReport:
     report = await orchestrator.report(ecosystem, name, version, deadline_s=PACKAGE_DEADLINE_S)

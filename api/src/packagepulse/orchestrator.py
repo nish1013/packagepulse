@@ -69,6 +69,10 @@ class Orchestrator:
         self._clock = clock
         self._now = now
 
+    @property
+    def upstream(self) -> Upstream:
+        return self._upstream
+
     def providers(self, ecosystem: Ecosystem, profile: Profile = Profile.FULL) -> list[Provider]:
         registry: Provider = PyPIRegistry() if ecosystem is Ecosystem.PYPI else NpmRegistry()
         providers: list[Provider] = [registry, OSVProvider(), DepsDevVersionProvider()]

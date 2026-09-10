@@ -7,6 +7,7 @@ from fastapi.exceptions import RequestValidationError
 
 from packagepulse import __version__
 from packagepulse.errors import ProblemError, handle_problem, handle_validation
+from packagepulse.graph import router as graph_router
 from packagepulse.orchestrator import Orchestrator
 from packagepulse.providers.base import Upstream
 from packagepulse.routes import router
@@ -42,6 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.add_exception_handler(ProblemError, handle_problem)
     app.add_exception_handler(RequestValidationError, handle_validation)
+    app.include_router(graph_router)
     app.include_router(router)
     app.include_router(scans_router)
 
