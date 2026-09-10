@@ -1,0 +1,42 @@
+event: start
+data: {"request_id":"f12f1bf58dd6440fa11c0e5dd73caccc","ecosystem":"pypi","name":"fastapi","version":null,"planned":["registry","osv","depsdev","dependents","github","scorecard"]}
+
+event: provider_start
+data: {"source":"registry","t_ms":1}
+
+event: provider
+data: {"source":"registry","status":"ok","http_status":200,"reason":null,"cached":false,"t_start_ms":1,"t_end_ms":147}
+
+event: provider_start
+data: {"source":"osv","t_ms":147}
+
+event: provider_start
+data: {"source":"depsdev","t_ms":148}
+
+event: provider_start
+data: {"source":"dependents","t_ms":149}
+
+event: provider_start
+data: {"source":"github","t_ms":149}
+
+event: provider_start
+data: {"source":"scorecard","t_ms":150}
+
+event: provider
+data: {"source":"scorecard","status":"not_found","http_status":404,"reason":null,"cached":false,"t_start_ms":150,"t_end_ms":271}
+
+event: provider
+data: {"source":"depsdev","status":"ok","http_status":200,"reason":null,"cached":false,"t_start_ms":148,"t_end_ms":279}
+
+event: provider
+data: {"source":"dependents","status":"ok","http_status":200,"reason":null,"cached":false,"t_start_ms":149,"t_end_ms":296}
+
+event: provider
+data: {"source":"osv","status":"ok","http_status":200,"reason":null,"cached":false,"t_start_ms":147,"t_end_ms":477}
+
+event: provider
+data: {"source":"github","status":"ok","http_status":200,"reason":null,"cached":false,"t_start_ms":149,"t_end_ms":599}
+
+event: report
+data: {"ecosystem":"pypi","name":"fastapi","version":"0.141.1","published_at":"2026-07-29T17:18:05.568608Z","deprecated":null,"repository":{"name":"fastapi/fastapi","url":"https://github.com/fastapi/fastapi","stars":102232,"open_issues":81,"archived":false,"pushed_at":"2026-09-01T20:59:55Z"},"dependents":{"total":20017,"direct":14066},"vulnerabilities":[],"scorecard":null,"scores":{"overall":99,"band":"healthy","coverage":1.0,"security":{"score":100,"band":"healthy","reasons":[]},"maintenance":{"score":100,"band":"healthy","reasons":[]},"community":{"score":94,"band":"healthy","reasons":[{"code":"stars","points":60,"message":"102,232 GitHub stars","source":"github"},{"code":"dependents","points":34,"message":"20,017 dependent packages","source":"dependents"}]},"supply_chain":{"score":100,"band":"healthy","reasons":[]}},"flags":[],"sources":{"registry":{"status":"ok","http_status":200,"ms":146,"cached":false,"reason":null},"scorecard":{"status":"not_found","http_status":404,"ms":121,"cached":false,"reason":null},"depsdev":{"status":"ok","http_status":200,"ms":131,"cached":false,"reason":null},"dependents":{"status":"ok","http_status":200,"ms":148,"cached":false,"reason":null},"osv":{"status":"ok","http_status":200,"ms":330,"cached":false,"reason":null},"github":{"status":"ok","http_status":200,"ms":449,"cached":false,"reason":null}},"timing":{"elapsed_ms":601,"sequential_ms":1325}}
+
