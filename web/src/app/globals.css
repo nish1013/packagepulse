@@ -1,16 +1,17 @@
 @import "tailwindcss";
 
-/* Colour tokens. Components use these through Tailwind (bg-surface, text-ink-2,
-   border-line ...) and charts read the same variables directly, so light and
-   dark are one set of rules. The health colours are for scores and graphs. */
-
 :root {
-  --surface: #ffffff;
-  --surface-2: #f3f5f7;
-  --line: #dde3e9;
-  --ink: #111820;
-  --ink-2: #4d5b68;
-  --accent: #2563eb;
+  --surface: #f7f9fb;
+  --panel: #ffffff;
+  --surface-2: #eef2f5;
+  --line: #dbe2e8;
+  --line-strong: #b6c1cc;
+  --ink: #0f1720;
+  --ink-2: #445260;
+  --ink-3: #5f6d7a;
+  --accent: #2f5bd3;
+  --accent-soft: #e8eefc;
+  --on-accent: #ffffff;
   --health-good: #15803d;
   --health-watch: #b45309;
   --health-risk: #b91c1c;
@@ -18,13 +19,18 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --surface: #0b0f14;
-    --surface-2: #141a21;
-    --line: #253039;
+    --panel: #10161d;
+    --surface-2: #161e26;
+    --line: #242e38;
+    --line-strong: #3b4855;
     --ink: #e6ebf0;
-    --ink-2: #9aa7b3;
-    --accent: #60a5fa;
+    --ink-2: #a3afba;
+    --ink-3: #85919c;
+    --accent: #7ea4ff;
+    --accent-soft: #18233b;
+    --on-accent: #0b0f14;
     --health-good: #4ade80;
     --health-watch: #fbbf24;
     --health-risk: #f87171;
@@ -32,27 +38,18 @@
   }
 }
 
-/* An explicit choice wins over the system preference, in both directions. */
-:root[data-theme="light"] {
-  --surface: #ffffff;
-  --surface-2: #f3f5f7;
-  --line: #dde3e9;
-  --ink: #111820;
-  --ink-2: #4d5b68;
-  --accent: #2563eb;
-  --health-good: #15803d;
-  --health-watch: #b45309;
-  --health-risk: #b91c1c;
-  --health-unknown: #6b7280;
-}
-
 :root[data-theme="dark"] {
   --surface: #0b0f14;
-  --surface-2: #141a21;
-  --line: #253039;
+  --panel: #10161d;
+  --surface-2: #161e26;
+  --line: #242e38;
+  --line-strong: #3b4855;
   --ink: #e6ebf0;
-  --ink-2: #9aa7b3;
-  --accent: #60a5fa;
+  --ink-2: #a3afba;
+  --ink-3: #85919c;
+  --accent: #7ea4ff;
+  --accent-soft: #18233b;
+  --on-accent: #0b0f14;
   --health-good: #4ade80;
   --health-watch: #fbbf24;
   --health-risk: #f87171;
@@ -61,18 +58,22 @@
 
 @theme inline {
   --color-surface: var(--surface);
+  --color-panel: var(--panel);
   --color-surface-2: var(--surface-2);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
   --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
   --color-health-good: var(--health-good);
   --color-health-watch: var(--health-watch);
   --color-health-risk: var(--health-risk);
   --color-health-unknown: var(--health-unknown);
-  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 html {
@@ -89,4 +90,35 @@ body {
 code {
   font-family: var(--font-mono);
   font-size: 0.9em;
+}
+
+:root .react-flow {
+  --xy-background-color: var(--panel);
+  --xy-edge-stroke: var(--line-strong);
+  --xy-edge-stroke-selected: var(--accent);
+  --xy-controls-button-background-color: var(--panel);
+  --xy-controls-button-background-color-hover: var(--surface-2);
+  --xy-controls-button-color: var(--ink-2);
+  --xy-controls-button-color-hover: var(--ink);
+  --xy-controls-button-border-color: var(--line);
+  --xy-controls-box-shadow: none;
+  --xy-attribution-background-color: transparent;
+}
+
+:root .react-flow__attribution a {
+  color: var(--ink-3);
+}
+
+.graph-touch-scroll .react-flow__pane {
+  touch-action: pan-x pan-y;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

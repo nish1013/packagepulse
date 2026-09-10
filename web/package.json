@@ -11,12 +11,17 @@
     "check": "npm run lint && tsc --noEmit && npm test"
   },
   "dependencies": {
+    "@dagrejs/dagre": "3.1.1",
+    "@xyflow/react": "12.11.6",
+    "botid": "1.5.11",
+    "d3-scale": "4.0.2",
     "next": "16.3.4",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/d3-scale": "^4.0.9",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
