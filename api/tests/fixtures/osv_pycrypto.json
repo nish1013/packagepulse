@@ -1,0 +1,36 @@
+{
+  "vulns": [
+    {
+      "aliases": [
+        "CVE-2018-6594",
+        "PYSEC-2018-97"
+      ],
+      "id": "GHSA-6528-wvf6-f6qg",
+      "summary": "Pycrypto generates weak key parameters"
+    },
+    {
+      "aliases": [
+        "CVE-2013-7459",
+        "PYSEC-2017-94"
+      ],
+      "id": "GHSA-cq27-v7xp-c356",
+      "summary": "Buffer Overflow in pycrypto"
+    },
+    {
+      "aliases": [
+        "CVE-2013-7459",
+        "GHSA-cq27-v7xp-c356"
+      ],
+      "id": "PYSEC-2017-94",
+      "summary": null
+    },
+    {
+      "aliases": [
+        "CVE-2018-6594",
+        "GHSA-6528-wvf6-f6qg"
+      ],
+      "id": "PYSEC-2018-97",
+      "summary": null
+    }
+  ]
+}

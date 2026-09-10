@@ -1,0 +1,54 @@
+[
+  {
+    "name": "package_report",
+    "secret": "packagepulse-test-vector-secret-0123456789abcdef",
+    "timestamp": "1800000000",
+    "nonce": "vector-nonce-0",
+    "method": "GET",
+    "path": "/v1/packages/pypi/fastapi",
+    "query": "",
+    "client_ip": "203.0.113.10",
+    "body": "",
+    "canonical": "PP1\n1800000000\nvector-nonce-0\nGET\n/v1/packages/pypi/fastapi\n\n203.0.113.10\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "signature": "v1=71a198ae7e56f5c5950b262e691c3f2ad26abc6e8f11eedcfd6c0f3973b6bc30"
+  },
+  {
+    "name": "scoped_npm_stream",
+    "secret": "packagepulse-test-vector-secret-0123456789abcdef",
+    "timestamp": "1800000000",
+    "nonce": "vector-nonce-1",
+    "method": "GET",
+    "path": "/v1/packages/npm/%40types%2Fnode/stream",
+    "query": "version=22.5.0",
+    "client_ip": "2001:db8::1",
+    "body": "",
+    "canonical": "PP1\n1800000000\nvector-nonce-1\nGET\n/v1/packages/npm/@types/node/stream\nversion=22.5.0\n2001:db8::1\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "signature": "v1=7295014afed6f141d5bf21fed2d0ae31b56fc2d5839f49ef834e0312850db78c"
+  },
+  {
+    "name": "query_sorted_and_encoded",
+    "secret": "packagepulse-test-vector-secret-0123456789abcdef",
+    "timestamp": "1800000000",
+    "nonce": "vector-nonce-2",
+    "method": "GET",
+    "path": "/v1/packages/npm/express/graph",
+    "query": "version=5.1.0&a=x+y*&a=(b)!~",
+    "client_ip": "198.51.100.7",
+    "body": "",
+    "canonical": "PP1\n1800000000\nvector-nonce-2\nGET\n/v1/packages/npm/express/graph\na=%28b%29%21~&a=x%20y%2A&version=5.1.0\n198.51.100.7\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "signature": "v1=d5b3d087cc4337cceec04122ba28108db113440c115a143964513e093196bf56"
+  },
+  {
+    "name": "scan_with_body",
+    "secret": "packagepulse-test-vector-secret-0123456789abcdef",
+    "timestamp": "1800000000",
+    "nonce": "vector-nonce-3",
+    "method": "POST",
+    "path": "/v1/scans",
+    "query": "",
+    "client_ip": "198.51.100.7",
+    "body": "{\"manifest\": \"fastapi==0.115.0\\nhttpx\\n\"}",
+    "canonical": "PP1\n1800000000\nvector-nonce-3\nPOST\n/v1/scans\n\n198.51.100.7\n72ebddc0c598cc08f88814e918a202b2476fa51da730938245fefec72a801090",
+    "signature": "v1=5998eb51fe8a554bc940ed4f2c708c2421aa8820d7026c148a15e86aa686ad0e"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "info": {
+    "home_page": "http://www.pycrypto.org/",
+    "name": "pycrypto",
+    "project_urls": {
+      "Homepage": "http://www.pycrypto.org/"
+    },
+    "summary": "Cryptographic modules for Python.",
+    "version": "2.6.1"
+  },
+  "urls": [
+    {
+      "upload_time_iso_8601": "2014-06-20T08:10:20.813938Z"
+    }
+  ]
+}

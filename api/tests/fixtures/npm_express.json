@@ -1,0 +1,9 @@
+{
+  "homepage": "https://expressjs.com/",
+  "name": "express",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/expressjs/express.git"
+  },
+  "version": "5.2.1"
+}

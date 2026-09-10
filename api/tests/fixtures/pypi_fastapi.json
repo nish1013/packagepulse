@@ -1,0 +1,20 @@
+{
+  "info": {
+    "home_page": null,
+    "name": "fastapi",
+    "project_urls": {
+      "Changelog": "https://fastapi.tiangolo.com/release-notes/",
+      "Documentation": "https://fastapi.tiangolo.com/",
+      "Homepage": "https://github.com/fastapi/fastapi",
+      "Issues": "https://github.com/fastapi/fastapi/issues",
+      "Repository": "https://github.com/fastapi/fastapi"
+    },
+    "summary": "FastAPI framework, high performance, easy to learn, fast to code, ready for production",
+    "version": "0.141.1"
+  },
+  "urls": [
+    {
+      "upload_time_iso_8601": "2026-07-29T17:18:04.364385Z"
+    }
+  ]
+}
