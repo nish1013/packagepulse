@@ -13,6 +13,7 @@ from packagepulse.domain import Ecosystem, ProviderStatus
 from packagepulse.errors import ProblemError
 from packagepulse.orchestrator import Orchestrator, Planned, ProviderFinished, ProviderStarted, ReportReady
 from packagepulse.schemas import PackageReport
+from packagepulse.security.rate_limit import ClientIp, LimitsDep
 from packagepulse.sse import SseEvent, sse_response
 
 logger = logging.getLogger(__name__)
@@ -36,18 +37,32 @@ VersionQuery = Annotated[str | None, Query(max_length=64)]
 
 @router.get("/packages/{ecosystem}/{name:path}/stream", response_model=None)
 async def package_stream(
-    ecosystem: Ecosystem, name: str, orchestrator: OrchestratorDep, version: VersionQuery = None
+    ecosystem: Ecosystem,
+    name: str,
+    orchestrator: OrchestratorDep,
+    limits: LimitsDep,
+    client: ClientIp,
+    version: VersionQuery = None,
 ) -> Response:
+    limits.check(client, limits.package)
     if is_bare_scope(ecosystem, name):
         report = await report_or_problem(orchestrator, ecosystem, f"{name}/stream", version)
         return JSONResponse(report.model_dump(mode="json"))
-    return sse_response(_package_events(orchestrator, ecosystem, validate_name(ecosystem, name), version))
+    name = validate_name(ecosystem, name)
+    release = limits.open_stream(client)
+    return sse_response(_package_events(orchestrator, ecosystem, name, version), on_close=release)
 
 
 @router.get("/packages/{ecosystem}/{name:path}")
 async def package(
-    ecosystem: Ecosystem, name: str, orchestrator: OrchestratorDep, version: VersionQuery = None
+    ecosystem: Ecosystem,
+    name: str,
+    orchestrator: OrchestratorDep,
+    limits: LimitsDep,
+    client: ClientIp,
+    version: VersionQuery = None,
 ) -> PackageReport:
+    limits.check(client, limits.package)
     return await report_or_problem(orchestrator, ecosystem, validate_name(ecosystem, name), version)
 
 

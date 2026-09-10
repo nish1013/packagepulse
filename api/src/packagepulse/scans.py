@@ -14,6 +14,7 @@ from packagepulse.manifests import Dependency, Manifest, parse_manifest
 from packagepulse.orchestrator import Orchestrator
 from packagepulse.routes import OrchestratorDep
 from packagepulse.schemas import PackageReport
+from packagepulse.security.rate_limit import ClientIp, LimitsDep
 from packagepulse.sse import SseEvent, sse_response
 
 logger = logging.getLogger(__name__)
@@ -32,8 +33,13 @@ class ScanRequest(BaseModel):
 
 
 @router.post("/scans", response_model=None)
-async def scan(body: ScanRequest, orchestrator: OrchestratorDep) -> StreamingResponse:
-    return sse_response(scan_events(orchestrator, parse_manifest(body.manifest)))
+async def scan(
+    body: ScanRequest, orchestrator: OrchestratorDep, limits: LimitsDep, client: ClientIp
+) -> StreamingResponse:
+    limits.check(client, limits.scan)
+    manifest = parse_manifest(body.manifest)
+    release = limits.open_stream(client, scan=True)
+    return sse_response(scan_events(orchestrator, manifest), on_close=release)
 
 
 async def scan_events(orchestrator: Orchestrator, manifest: Manifest) -> AsyncIterator[SseEvent]:

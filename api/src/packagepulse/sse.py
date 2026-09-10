@@ -3,10 +3,11 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import json
-from collections.abc import AsyncIterator, Mapping
+from collections.abc import AsyncIterator, Callable, Mapping
 from typing import Any
 
 from fastapi.responses import StreamingResponse
+from starlette.types import Receive, Scope, Send
 
 SSE_HEADERS = {"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"}
 
@@ -37,7 +38,20 @@ async def with_heartbeat(events: AsyncIterator[SseEvent], ping_s: float = 15.0) 
             await next_event
 
 
-def sse_response(events: AsyncIterator[SseEvent], ping_s: float = 15.0) -> StreamingResponse:
-    return StreamingResponse(
-        with_heartbeat(events, ping_s), media_type="text/event-stream", headers=SSE_HEADERS
-    )
+class SseResponse(StreamingResponse):
+    def __init__(self, content: AsyncIterator[str], on_close: Callable[[], None] | None = None) -> None:
+        super().__init__(content, media_type="text/event-stream", headers=SSE_HEADERS)
+        self._on_close = on_close
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        try:
+            await super().__call__(scope, receive, send)
+        finally:
+            if self._on_close is not None:
+                self._on_close()
+
+
+def sse_response(
+    events: AsyncIterator[SseEvent], ping_s: float = 15.0, on_close: Callable[[], None] | None = None
+) -> StreamingResponse:
+    return SseResponse(with_heartbeat(events, ping_s), on_close)

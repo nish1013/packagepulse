@@ -53,7 +53,10 @@ async def upstream() -> AsyncIterator[Upstream]:
 
 @pytest.fixture
 async def api() -> AsyncIterator[AsyncClient]:
-    app = create_app(Settings(env="test"))
+    settings = Settings(
+        env="test", signing_secret=None, package_requests_per_minute=1000, scans_per_10_minutes=1000
+    )
+    app = create_app(settings)
     async with (
         app.router.lifespan_context(app),
         AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client,

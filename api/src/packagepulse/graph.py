@@ -19,6 +19,7 @@ from packagepulse.registries.npm import NpmRegistry
 from packagepulse.registries.pypi import PyPIRegistry
 from packagepulse.routes import OrchestratorDep, VersionQuery, is_bare_scope, report_or_problem, validate_name
 from packagepulse.schemas import PackageReport
+from packagepulse.security.rate_limit import ClientIp, LimitsDep
 from packagepulse.sse import SseEvent, sse_response
 
 logger = logging.getLogger(__name__)
@@ -57,12 +58,20 @@ class DependencyGraph:
 
 @router.get("/packages/{ecosystem}/{name:path}/graph", response_model=None)
 async def package_graph(
-    ecosystem: Ecosystem, name: str, orchestrator: OrchestratorDep, version: VersionQuery = None
+    ecosystem: Ecosystem,
+    name: str,
+    orchestrator: OrchestratorDep,
+    limits: LimitsDep,
+    client: ClientIp,
+    version: VersionQuery = None,
 ) -> Response:
+    limits.check(client, limits.package)
     if is_bare_scope(ecosystem, name):
         report = await report_or_problem(orchestrator, ecosystem, f"{name}/graph", version)
         return JSONResponse(report.model_dump(mode="json"))
-    return sse_response(graph_events(orchestrator, ecosystem, validate_name(ecosystem, name), version))
+    name = validate_name(ecosystem, name)
+    release = limits.open_stream(client)
+    return sse_response(graph_events(orchestrator, ecosystem, name, version), on_close=release)
 
 
 def build_graph(raw: dict[str, Any], max_nodes: int = MAX_NODES) -> DependencyGraph:

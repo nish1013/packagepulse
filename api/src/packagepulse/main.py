@@ -12,6 +12,9 @@ from packagepulse.orchestrator import Orchestrator
 from packagepulse.providers.base import Upstream
 from packagepulse.routes import router
 from packagepulse.scans import router as scans_router
+from packagepulse.security.middleware import SignatureMiddleware
+from packagepulse.security.rate_limit import Limits
+from packagepulse.security.signature import Verifier
 from packagepulse.settings import Settings, get_settings
 
 USER_AGENT = f"packagepulse/{__version__} (+https://github.com/nish1013/packagepulse)"
@@ -41,6 +44,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         openapi_url="/openapi.json" if show_docs else None,
         lifespan=lifespan,
     )
+    app.state.limits = Limits(
+        package_per_minute=settings.package_requests_per_minute,
+        scans_per_10_minutes=settings.scans_per_10_minutes,
+        streams_per_client=settings.streams_per_client,
+        concurrent_scans=settings.concurrent_scans,
+    )
+    verifier = Verifier(settings.signing_secrets) if settings.signing_secrets else None
+    exempt = ("/health", "/docs", "/openapi.json") if show_docs else ("/health",)
+    app.add_middleware(SignatureMiddleware, verifier=verifier, exempt_paths=exempt)
     app.add_exception_handler(ProblemError, handle_problem)
     app.add_exception_handler(RequestValidationError, handle_validation)
     app.include_router(graph_router)
