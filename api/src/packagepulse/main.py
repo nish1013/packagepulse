@@ -10,6 +10,7 @@ from packagepulse.errors import ProblemError, handle_problem, handle_validation
 from packagepulse.orchestrator import Orchestrator
 from packagepulse.providers.base import Upstream
 from packagepulse.routes import router
+from packagepulse.scans import router as scans_router
 from packagepulse.settings import Settings, get_settings
 
 USER_AGENT = f"packagepulse/{__version__} (+https://github.com/nish1013/packagepulse)"
@@ -42,6 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_exception_handler(ProblemError, handle_problem)
     app.add_exception_handler(RequestValidationError, handle_validation)
     app.include_router(router)
+    app.include_router(scans_router)
 
     @app.get("/health", tags=["meta"])
     async def health() -> dict[str, str]:
