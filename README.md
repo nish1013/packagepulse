@@ -1,8 +1,10 @@
 # PackagePulse
 
-Live health checks for your PyPI and npm dependencies.
+**PackagePulse checks the health of PyPI and npm dependencies using live evidence from several independent
+sources.** Built with FastAPI and asyncio to query registry, vulnerability, dependency-graph, GitHub and
+supply-chain APIs concurrently, while tolerating partial failures.
 
-**Try it:** <https://packagepulse.satharasinghe.com>
+**[Live demo](https://packagepulse.satharasinghe.com) · [How it works](#how-it-works) · [Run locally](#running-locally)**
 
 Look up a package, or paste a `requirements.txt` or `package.json`. PackagePulse checks the package
 registry, OSV, deps.dev, GitHub and OpenSSF Scorecard at the same time, then scores each dependency and
@@ -39,8 +41,15 @@ The browser only talks to the web app. Its server-side routes check and sign eac
 the API, so the API is never exposed directly.
 
 The API uses asyncio to query every source concurrently, with timeouts, retries, caching and rate limits,
-and streams results back as they arrive. Scanning a seven-package manifest takes about one second, against
-eight if the same calls ran one after another.
+and streams results back as they arrive.
+
+| Example `package.json` scan, 7 packages | Time |
+| --- | --- |
+| Concurrent | 1.0 s |
+| Sequential equivalent | 8.3 s |
+
+Measured locally with a cold cache against the live upstream APIs. The sequential figure is the sum of each
+upstream call's own duration in the same run.
 
 ## Tech stack
 
