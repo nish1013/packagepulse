@@ -21,11 +21,11 @@ shows the reason behind every point it takes off.
 ```mermaid
 flowchart LR
     B["Browser"] --> P
-    subgraph Vercel["Vercel · Next.js"]
+    subgraph Web["Web app · Next.js"]
         P["Server-side routes<br/>bot check · request signing"]
     end
     P -->|"signed request"| O
-    subgraph Railway["Railway · FastAPI"]
+    subgraph API["API · FastAPI"]
         O["Orchestrator<br/>asyncio · retries · cache"]
     end
     O --> R["PyPI / npm"]
@@ -35,18 +35,17 @@ flowchart LR
     O --> S["OpenSSF Scorecard"]
 ```
 
-The web app is a Next.js site on Vercel. The browser only talks to it, and its server-side routes check and
-sign each request before calling the API, so the API is never exposed directly.
+The browser only talks to the web app. Its server-side routes check and sign each request before calling
+the API, so the API is never exposed directly.
 
-The API is a FastAPI service on Railway. It uses asyncio to query every source concurrently, with timeouts,
-retries, caching and rate limits, and streams results back as they arrive. Scanning a seven-package
-manifest takes about one second, against eight if the same calls ran one after another.
+The API uses asyncio to query every source concurrently, with timeouts, retries, caching and rate limits,
+and streams results back as they arrive. Scanning a seven-package manifest takes about one second, against
+eight if the same calls ran one after another.
 
 ## Tech stack
 
 - **API:** Python 3.13, FastAPI, asyncio, httpx, Pydantic
 - **Web:** Next.js, React, TypeScript, Tailwind CSS, React Flow
-- **Hosting:** Railway and Vercel
 
 ## Running locally
 
