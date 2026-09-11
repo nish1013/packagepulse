@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PackageView } from "@/components/package-view";
 import { ECOSYSTEM_LABEL } from "@/lib/health/format";
+import { packageShare, shareMetadata } from "@/lib/share";
 import { isValidVersion, parsePackageName } from "@/lib/upstream/package-path";
 
 interface Props {
@@ -12,7 +13,14 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { ecosystem, name } = await params;
   const target = parsePackageName(ecosystem, name);
-  return target ? { title: `${target.name} on ${ECOSYSTEM_LABEL[target.ecosystem]}` } : {};
+  if (!target) return {};
+
+  const share = packageShare(target);
+  return {
+    title: `${target.name} on ${ECOSYSTEM_LABEL[target.ecosystem]}`,
+    description: share.description,
+    ...shareMetadata(share),
+  };
 }
 
 export default async function PackagePage({ params, searchParams }: Props) {

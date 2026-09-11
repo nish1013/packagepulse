@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, shareMetadata, siteShare } from "@/lib/share";
 import { THEME_STORAGE_KEY } from "@/lib/theme/resolve-theme";
 import "./globals.css";
 
@@ -8,9 +9,10 @@ const sans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], 
 const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-plex-mono" });
 
 export const metadata: Metadata = {
-  title: { default: "PackagePulse", template: "%s · PackagePulse" },
-  description:
-    "Live health evidence for PyPI and npm dependencies: vulnerabilities, release activity, repository status and supply-chain checks in one place.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  ...shareMetadata(siteShare()),
 };
 
 export const viewport: Viewport = {
